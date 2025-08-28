@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Join the waitlist for BriggX, Nairobi's new community-driven traffic app. Get real-time alerts for traffic, hazards, and police, and find the fastest routes.">
+    <title>BriggX - Smart Traffic for Nairobi</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+
+<body class="bg-gray-50 text-gray-800 p-4 flex items-center justify-center min-h-screen">
+
+    <div class="container no-scrollbar mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-10 md:p-16 max-w-6xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+            <div class="w-full text-center lg:text-left">
+                <div class="mb-6 flex justify-center lg:justify-start">
+                    <svg class="h-12 w-auto text-blue-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm-1.5 14.5L12 15l1.5 1.5 4-4-1.5-1.5L12 12.5 9.5 10l-1.5 1.5 4 4z" />
+                    </svg>
+                    <span class="text-3xl font-bold ml-3 text-gray-800 self-center">BriggX</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                    <span id="main-headline" class="typing-text"></span>
+                </h1>
+
+                <p id="sub-headline" class="mt-4 text-base md:text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 opacity-0 transform translate-y-4">
+                    Join the community of Nairobi drivers making our roads smarter. Get real-time alerts and find the best routes, together.
+                </p>
+
+                <div id="waitlist-section" class="mt-10 opacity-0 transform translate-y-8">
+                    <div class="max-w-md mx-auto lg:mx-0">
+                        <form id="waitlist-form" class="mt-6 flex flex-col gap-3">
+                            <div class="relative flex-grow">
+                                <input id="email-input" name="email" type="email" autocomplete="email" required class="w-full px-5 py-3 text-base text-gray-900 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 peer" placeholder="yourname@email.com">
+                                <div id="email-error" class="text-red-500 text-sm mt-1 absolute"></div>
+                            </div>
+                            <button id="submit-btn" type="submit" class="w-full justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center shrink-0">
+                                <span id="btn-text">Get Early Access</span>
+                                <div id="btn-spinner" class="spinner ml-2 hidden"></div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="thank-you-message" class="hidden mt-10">
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg max-w-md mx-auto lg:mx-0 transform scale-95 opacity-0 transition-all duration-500">
+                        <h2 class="text-2xl font-bold text-green-900">🎉 You're on the list!</h2>
+                        <p class="text-green-800 mt-2">We'll email you as soon as the app is ready. Welcome to the community!</p>
+                        <div class="mt-4 text-sm text-green-700">
+                            <span id="subscriber-count" class="font-bold">1,247</span> people are already waiting.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex items-center justify-center p-8">
+                <svg id="scene-illustration" class="w-full h-auto" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="roadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#E0E7FF" />
+                            <stop offset="100%" stop-color="#C7D2FE" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M50,400 C150,250 350,250 450,400" stroke="#CBD5E1" stroke-width="40" fill="none" stroke-linecap="round" />
+                    <path d="M50,400 C150,250 350,250 450,400" stroke="white" stroke-width="2" fill="none" stroke-dasharray="10 15" stroke-linecap="round" />
+
+                    <circle cx="250" cy="150" r="120" fill="#EFF6FF" />
+
+                    <g transform="translate(130, 235) scale(0.8)">
+                        <rect x="0" y="20" width="80" height="30" rx="10" fill="#3B82F6" />
+                        <path d="M10 20 Q 20 0, 40 0 T 70 20 Z" fill="#60A5FA" />
+                        <circle cx="15" cy="50" r="8" fill="#4B5563" />
+                        <circle cx="65" cy="50" r="8" fill="#4B5563" />
+                    </g>
+                    <g transform="translate(180, 275)" class="map-pin">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#F59E0B" />
+                    </g>
+                    <g transform="translate(300, 285)" class="map-pin">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#10B981" />
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
