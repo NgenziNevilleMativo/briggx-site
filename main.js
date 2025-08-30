@@ -9,6 +9,25 @@ class BriggXLandingPage {
         this.bindEvents();
         this.animateOnLoad();
         this.typeHeadline();
+        this.setupTouchOptimizations();
+    }
+
+    setupTouchOptimizations() {
+        // Prevent double-tap zoom on buttons
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('touchend', function(e) {
+                e.preventDefault();
+            });
+        });
+
+        // Add haptic feedback for supported devices
+        const submitBtn = document.getElementById('submit-btn');
+        if (submitBtn && 'vibrate' in navigator) {
+            submitBtn.addEventListener('click', () => {
+                navigator.vibrate(50);
+            });
+        }
     }
 
     typeHeadline() {
@@ -22,12 +41,12 @@ class BriggXLandingPage {
             if (charIndex < this.headlineText.length) {
                 headlineElement.innerHTML += this.headlineText.charAt(charIndex);
                 charIndex++;
-                setTimeout(type, 50);
+                setTimeout(type, 60);
             } else {
                 headlineElement.classList.remove('typing-text');
             }
         };
-        setTimeout(type, 500);
+        setTimeout(type, 800);
     }
 
     bindEvents() {
@@ -65,10 +84,9 @@ class BriggXLandingPage {
     }
 
     async simulateApiCall(email) {
-        // Simulate a network request
         await new Promise(resolve => setTimeout(resolve, 1500));
-        if (Math.random() > 0.1) return { success: true }; // Simulate a successful response
-        throw new Error('Simulated API error'); // Simulate a failure
+        if (Math.random() > 0.1) return { success: true };
+        throw new Error('Simulated API error');
     }
 
     isValidEmail(email) {
@@ -88,14 +106,20 @@ class BriggXLandingPage {
         const errorElement = document.getElementById('email-error');
         const emailInput = document.getElementById('email-input');
         if (errorElement) errorElement.textContent = message;
-        if (emailInput) emailInput.classList.add('border-red-500');
+        if (emailInput) {
+            emailInput.classList.add('border-red-400', 'bg-red-50');
+            emailInput.classList.remove('border-gray-200');
+        }
     }
 
     hideEmailError() {
         const errorElement = document.getElementById('email-error');
         const emailInput = document.getElementById('email-input');
         if (errorElement) errorElement.textContent = '';
-        if (emailInput) emailInput.classList.remove('border-red-500');
+        if (emailInput) {
+            emailInput.classList.remove('border-red-400', 'bg-red-50');
+            emailInput.classList.add('border-gray-200');
+        }
     }
 
     setSubmitButtonLoading(isLoading) {
@@ -106,10 +130,12 @@ class BriggXLandingPage {
             btnText.textContent = 'Joining...';
             btnSpinner.classList.remove('hidden');
             submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
         } else {
             btnText.textContent = 'Get Early Access';
             btnSpinner.classList.add('hidden');
             submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
         }
     }
 
@@ -125,15 +151,15 @@ class BriggXLandingPage {
                 if (messageBox) {
                     messageBox.classList.remove('scale-95', 'opacity-0');
                 }
-                this.createConfetti();
+                this.createMobileConfetti();
             }, 50);
 
             this.animateCounterUp();
         }
     }
 
-    createConfetti() {
-        const colors = ['#3B82F6', '#10B981', '#F59E0B', '#6366F1'];
+    createMobileConfetti() {
+        const colors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
         const successBox = document.getElementById('thank-you-message');
         if (!successBox) return;
 
@@ -141,12 +167,14 @@ class BriggXLandingPage {
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
-        for (let i = 0; i < 80; i++) {
+        const confettiCount = window.innerWidth < 640 ? 40 : 60;
+
+        for (let i = 0; i < confettiCount; i++) {
             const confetti = document.createElement('div');
             confetti.className = 'confetti';
 
             const angle = Math.random() * Math.PI * 2;
-            const velocity = 50 + Math.random() * 200;
+            const velocity = 30 + Math.random() * 100;
             const dx = Math.cos(angle) * velocity;
             const dy = Math.sin(angle) * velocity;
 
@@ -161,7 +189,7 @@ class BriggXLandingPage {
 
             setTimeout(() => {
                 confetti.remove();
-            }, 2000);
+            }, 1500);
         }
     }
 
@@ -170,7 +198,7 @@ class BriggXLandingPage {
         if (!counterElement) return;
 
         const targetCount = parseInt(counterElement.textContent.replace(',', '')) + 1;
-        let currentCount = targetCount - 20;
+        let currentCount = targetCount - 10;
 
         const update = () => {
             if (currentCount < targetCount) {
@@ -188,16 +216,17 @@ class BriggXLandingPage {
 
         setTimeout(() => {
             if (subHeadline) {
-                subHeadline.style.transition = 'opacity 0.5s, transform 0.5s';
+                subHeadline.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
                 subHeadline.classList.remove('opacity-0', 'translate-y-4');
             }
-        }, 300);
+        }, 500);
+
         setTimeout(() => {
             if (waitlistSection) {
-                waitlistSection.style.transition = 'opacity 0.5s, transform 0.5s';
+                waitlistSection.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
                 waitlistSection.classList.remove('opacity-0', 'translate-y-8');
             }
-        }, 500);
+        }, 800);
     }
 }
 
