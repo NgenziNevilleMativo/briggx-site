@@ -41,7 +41,7 @@
                         </p>
                     </div>
 
-                    <div class="block lg:hidden">
+                    <div id="mobile-illustration" class="block lg:hidden opacity-0 transform translate-y-8">
                         <div class="relative glassmorphism rounded-xl p-4 floating mx-auto max-w-xs">
                             <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-4 text-white">
                                 <div class="flex items-center justify-between mb-3">
@@ -74,29 +74,21 @@
                     </div>
 
                     <div id="waitlist-section" class="opacity-0 transform translate-y-8">
-                        <form id="waitlist-form" class="space-y-4 max-w-sm mx-auto lg:mx-0">
-                            <div class="relative">
-                                <input 
-                                    id="email-input" 
-                                    name="email" 
-                                    type="email" 
-                                    autocomplete="email" 
-                                    required 
-                                    class="w-full px-4 py-3 sm:px-5 sm:py-4 text-base text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-300 placeholder-gray-500" 
-                                    placeholder="your@email.com"
-                                >
-                                <div id="email-error" class="text-red-500 text-sm mt-1"></div>
-                            </div>
-                            
+                        <div class="max-w-sm mx-auto lg:mx-0">
                             <button 
-                                id="submit-btn" 
-                                type="submit" 
-                                class="w-full touch-button py-3 sm:py-4 px-6 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2"
+                                id="google-signup-btn" 
+                                type="button" 
+                                class="w-full touch-button py-3 sm:py-4 px-6 bg-white border-2 border-gray-200 hover:bg-gray-50 active:bg-gray-100 text-gray-800 font-semibold rounded-xl shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-3"
                             >
-                                <span id="btn-text">Get Early Access</span>
-                                <div id="btn-spinner" class="spinner hidden"></div>
+                                <svg class="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M47.532 24.552c0-1.584-.144-3.12-.42-4.608H24.48v8.688h12.936c-.564 2.82-2.184 5.208-4.68 6.864v5.616h7.224c4.224-3.888 6.648-9.612 6.648-16.56z" fill="#4285F4"></path>
+                                    <path d="M24.48 48c6.456 0 11.88-2.136 15.84-5.784L33.096 36.6c-2.136 1.44-4.872 2.28-7.62 2.28-5.832 0-10.764-3.924-12.528-9.216H5.472v5.784C9.432 42.444 16.416 48 24.48 48z" fill="#34A853"></path>
+                                    <path d="M11.952 29.664c-.504-1.44-.792-3-.792-4.608s.288-3.168.792-4.608V14.64H5.472C3.96 17.664 3 21.228 3 25.056c0 3.828.96 7.392 2.472 10.416l6.48-5.784z" fill="#FBBC05"></path>
+                                    <path d="M24.48 9.78c3.492 0 6.6 1.2 9.072 3.528l7.224-7.224C36.36 2.196 30.936 0 24.48 0 16.416 0 9.432 5.556 5.472 12.84l6.48 5.784c1.764-5.292 6.696-9.216 12.528-9.216z" fill="#EA4335"></path>
+                                </svg>
+                                <span>Sign up with Google</span>
                             </button>
-                        </form>
+                        </div>
                     </div>
 
                     <div id="thank-you-message" class="hidden">
@@ -113,7 +105,7 @@
                     </div>
                 </div>
 
-                <div class="hidden lg:flex items-center justify-center p-8">
+                <div id="desktop-illustration" class="hidden lg:flex items-center justify-center p-8 opacity-0 transform translate-x-8">
                     <div class="relative">
                         <div class="glassmorphism rounded-3xl p-6 floating">
                             <div class="bg-white rounded-2xl p-6 shadow-xl">
