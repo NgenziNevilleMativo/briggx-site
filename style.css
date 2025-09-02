@@ -95,9 +95,31 @@ body {
     touch-action: manipulation;
 }
 
+/* Form styles */
+.waitlist-form input {
+    transition: all 0.2s ease;
+}
+
+.waitlist-form input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Success animation */
+.success-bounce {
+    animation: successBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes successBounce {
+    0% { transform: scale(0.8) rotate(-3deg); opacity: 0; }
+    50% { transform: scale(1.05) rotate(1deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
 /* Reduced motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-    .floating, .typing-text::after {
+    .floating, .typing-text::after, .success-bounce {
         animation: none;
     }
 }
