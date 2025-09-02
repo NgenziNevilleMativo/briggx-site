@@ -1,7 +1,6 @@
 class BriggXLandingPage {
     constructor() {
         this.headlineText = "Smarter roads are ahead. Let's get there together.";
-        // Your actual Waitlo API credentials
         this.waitloApiKey = 'JVdlqKtFtXcwyr0FPstd0WCfPRwTQu3sApIwCSA0ZXfkyKKKSTk2dyFQFiVWu07q';
         this.waitloEndpoint = 'https://api.waitlo.com/api/waitlist/subscribe';
         this.subscriberCountKey = 'briggx_subscriber_count';
@@ -96,14 +95,13 @@ class BriggXLandingPage {
                 await this.submitToWaitlo(email);
                 this.addEmailToSubscribed(email);
                 this.incrementSubscriberCount();
-                this.showSuccessMessage();
+                this.showSuccessMessage(email); // Pass email to showSuccessMessage
                 this.createConfetti();
             } catch (error) {
                 console.error('Waitlist submission error:', error);
                 
-                // Check if it's a duplicate email error from Waitlo
                 if (error.message.includes('already exists') || error.message.includes('duplicate') || error.message.includes('400')) {
-                    this.showAlreadyRegisteredMessage(emailInput.value.trim());
+                    this.showAlreadyRegisteredMessage(email);
                 } else {
                     this.showError('Something went wrong. Please try again.');
                 }
@@ -113,7 +111,6 @@ class BriggXLandingPage {
     }
 
     async submitToWaitlo(email) {
-        // Using Waitlo's actual API format
         const response = await fetch(`${this.waitloEndpoint}?api_key=${this.waitloApiKey}`, {
             method: 'POST',
             headers: {
@@ -148,21 +145,33 @@ class BriggXLandingPage {
         }
     }
 
-    showSuccessMessage() {
+    showSuccessMessage(email) {
         const waitlistSection = document.getElementById('waitlist-section');
         const thankYouMessage = document.getElementById('thank-you-message');
         
         if (waitlistSection && thankYouMessage) {
             waitlistSection.classList.add('hidden');
             thankYouMessage.classList.remove('hidden');
+
+            // Get the user's position
+            const userPosition = this.getUserPosition(email.toLowerCase());
+
+            // Update message with personalized number
+            thankYouMessage.querySelector('.text-center').innerHTML = `
+                <div class="text-3xl">🎉</div>
+                <h2 class="text-xl font-bold text-green-900">You're on the list!</h2>
+                <p class="text-green-700">We'll email you as soon as the app is ready. Welcome to the community!</p>
+                <div class="text-sm text-green-600 pt-2 border-t border-green-200">
+                    You are subscriber <span class="font-bold">#${userPosition || 'N/A'}</span>
+                </div>
+            `;
             
-            // Update subscriber count display
-            this.updateSubscriberCountDisplay();
+            // Add the bounce animation
+            thankYouMessage.querySelector('.bg-green-50').classList.add('success-bounce');
         }
     }
 
     showError(message) {
-        // Create a temporary error message
         const form = document.getElementById('waitlist-form');
         const existingError = form.querySelector('.error-message');
         if (existingError) existingError.remove();
@@ -172,7 +181,6 @@ class BriggXLandingPage {
         errorDiv.textContent = message;
         form.appendChild(errorDiv);
 
-        // Remove error after 5 seconds
         setTimeout(() => {
             if (errorDiv.parentNode) {
                 errorDiv.remove();
@@ -201,18 +209,14 @@ class BriggXLandingPage {
         }
     }
 
-    // New methods for subscriber count management
     initializeSubscriberCount() {
-        // Initialize subscriber count in memory if not exists
         if (!this.getSubscriberCount()) {
-            this.setSubscriberCount(1); // Start from 1
+            this.setSubscriberCount(1);
         }
         this.updateSubscriberCountDisplay();
     }
 
     getSubscriberCount() {
-        // In a real application, you'd want to store this on your server
-        // For demo purposes, we'll store it in memory with a fallback
         if (!window.briggxSubscriberCount) {
             window.briggxSubscriberCount = 1;
         }
@@ -236,7 +240,6 @@ class BriggXLandingPage {
     }
 
     getSubscribedEmails() {
-        // Store subscribed emails in memory
         if (!window.briggxSubscribedEmails) {
             window.briggxSubscribedEmails = new Set();
         }
@@ -251,7 +254,6 @@ class BriggXLandingPage {
         const subscribedEmails = this.getSubscribedEmails();
         if (!subscribedEmails.has(email.toLowerCase())) {
             subscribedEmails.add(email.toLowerCase());
-            // Store the user's position in the waitlist
             this.setUserPosition(email.toLowerCase(), this.getSubscriberCount());
         }
     }
@@ -275,7 +277,6 @@ class BriggXLandingPage {
         const thankYouMessage = document.getElementById('thank-you-message');
         
         if (waitlistSection && thankYouMessage) {
-            // Update the message content for already registered users
             const messageContainer = thankYouMessage.querySelector('.text-center');
             const userPosition = this.getUserPosition(email.toLowerCase());
             
@@ -290,20 +291,13 @@ class BriggXLandingPage {
             
             waitlistSection.classList.add('hidden');
             thankYouMessage.classList.remove('hidden');
-            
-            // Add the bounce animation
             thankYouMessage.querySelector('.bg-green-50').classList.add('success-bounce');
         }
     }
 
     checkIfAlreadySubscribed() {
-        // Check if current user has already subscribed
-        // You could enhance this by checking against a server-side database
         const form = document.getElementById('waitlist-form');
         const thankYouMessage = document.getElementById('thank-you-message');
-        
-        // For demo purposes, we'll just show the current count
-        // In a real app, you'd check the user's subscription status from your backend
         this.updateSubscriberCountDisplay();
     }
 }
