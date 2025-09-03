@@ -1,7 +1,7 @@
 class BriggXLandingPage {
     constructor() {
         this.headlineText = "Smarter roads are ahead. Let's get there together.";
-        this.waitloApiKey = 'JVdlqKtFtXcwyr0FPstd0WCfPRwTQu3sApIwCSA0ZXfkyKKKSTk2dyFQFiVWu07q';
+        this.waitloApiKey = 'CfM20S5EubrGtCFlMZoDzDqGwyrrE8PTHgFlKD4JVgS2pz1wTiQSs4hhicxbhO6R';
         this.waitloEndpoint = 'https://api.waitlo.com/api/waitlist/subscribe';
         this.subscriberCountKey = 'briggx_subscriber_count';
         this.subscribedEmailsKey = 'briggx_subscribed_emails';
@@ -95,7 +95,7 @@ class BriggXLandingPage {
                 await this.submitToWaitlo(email);
                 this.addEmailToSubscribed(email);
                 this.incrementSubscriberCount();
-                this.showSuccessMessage(email); // Pass email to showSuccessMessage
+                this.showSuccessMessage(email);
                 this.createConfetti();
             } catch (error) {
                 console.error('Waitlist submission error:', error);
@@ -278,14 +278,32 @@ class BriggXLandingPage {
         
         if (waitlistSection && thankYouMessage) {
             const messageContainer = thankYouMessage.querySelector('.text-center');
-            const userPosition = this.getUserPosition(email.toLowerCase());
+            let userPosition = this.getUserPosition(email.toLowerCase());
+            
+            // Assign positions based on known Waitlo subscriber order
+            if (!userPosition) {
+                const knownPositions = {
+                    'mativongenzi97@gmail.com': 1,
+                    'muemaian253@gmail.com': 2, 
+                    'imativo95@gmail.com': 3
+                };
+                
+                userPosition = knownPositions[email.toLowerCase()];
+                
+                if (userPosition) {
+                    this.setUserPosition(email.toLowerCase(), userPosition);
+                } else {
+                    // For any unknown emails, assign next available position
+                    userPosition = this.getSubscriberCount() + 1;
+                }
+            }
             
             messageContainer.innerHTML = `
                 <div class="text-3xl">🎉</div>
                 <h2 class="text-xl font-bold text-green-900">You're already on the list!</h2>
                 <p class="text-green-700">We'll email you as soon as the app is ready. Welcome to the community!</p>
                 <div class="text-sm text-green-600 pt-2 border-t border-green-200">
-                    You are subscriber <span class="font-bold">#${userPosition || 'N/A'}</span>
+                    You are subscriber <span class="font-bold">#${userPosition}</span>
                 </div>
             `;
             
