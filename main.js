@@ -1,7 +1,7 @@
 class BriggXLandingPage {
     constructor() {
         this.headlineText = "Smarter roads are ahead. Let's get there together.";
-        this.waitloApiKey = '7yShFe8mIXTGhGfg1LxzxDRBE803T5ybfKSpzoLup2ptQassJy4wQPp5VIudn0vj';
+        this.waitloApiKey = 'J7R2eoSFXBGBQyEuhwUM75wL6GlgX1QAgAdfZzfNKto1BTroQUgDmhtDLeKXDZnr';
         this.waitloEndpoint = 'https://api.waitlo.com/api/waitlist/subscribe';
         this.subscriberCountKey = 'briggx_subscriber_count';
         this.subscribedEmailsKey = 'briggx_subscribed_emails';
