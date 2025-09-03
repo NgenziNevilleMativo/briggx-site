@@ -1,7 +1,7 @@
 class BriggXLandingPage {
     constructor() {
         this.headlineText = "Smarter roads are ahead. Let's get there together.";
-        this.waitloApiKey = 'CfM20S5EubrGtCFlMZoDzDqGwyrrE8PTHgFlKD4JVgS2pz1wTiQSs4hhicxbhO6R';
+        this.waitloApiKey = '7yShFe8mIXTGhGfg1LxzxDRBE803T5ybfKSpzoLup2ptQassJy4wQPp5VIudn0vj';
         this.waitloEndpoint = 'https://api.waitlo.com/api/waitlist/subscribe';
         this.subscriberCountKey = 'briggx_subscriber_count';
         this.subscribedEmailsKey = 'briggx_subscribed_emails';
@@ -93,15 +93,25 @@ class BriggXLandingPage {
 
             try {
                 await this.submitToWaitlo(email);
-                this.addEmailToSubscribed(email);
-                this.incrementSubscriberCount();
-                this.showSuccessMessage(email);
+                
+                // Get the CURRENT total count, then assign the NEXT position to new user
+                const currentCount = this.getTotalSubscriberCount();
+                const newPosition = currentCount + 1;
+                
+                // Add email to subscribed list with their position
+                this.addEmailToSubscribed(email, newPosition);
+                
+                // Increment the total count
+                this.setTotalSubscriberCount(newPosition);
+                
+                this.showSuccessMessage(email, newPosition);
                 this.createConfetti();
             } catch (error) {
                 console.error('Waitlist submission error:', error);
                 
                 if (error.message.includes('already exists') || error.message.includes('duplicate') || error.message.includes('400')) {
-                    this.showAlreadyRegisteredMessage(email);
+                    // Handle case where email already exists in Waitlo but not in our local tracking
+                    this.handleExistingEmail(email);
                 } else {
                     this.showError('Something went wrong. Please try again.');
                 }
@@ -145,7 +155,7 @@ class BriggXLandingPage {
         }
     }
 
-    showSuccessMessage(email) {
+    showSuccessMessage(email, position) {
         const waitlistSection = document.getElementById('waitlist-section');
         const thankYouMessage = document.getElementById('thank-you-message');
         
@@ -153,16 +163,13 @@ class BriggXLandingPage {
             waitlistSection.classList.add('hidden');
             thankYouMessage.classList.remove('hidden');
 
-            // Get the user's position
-            const userPosition = this.getUserPosition(email.toLowerCase());
-
-            // Update message with personalized number
+            // Update message with correct position
             thankYouMessage.querySelector('.text-center').innerHTML = `
                 <div class="text-3xl">🎉</div>
                 <h2 class="text-xl font-bold text-green-900">You're on the list!</h2>
                 <p class="text-green-700">We'll email you as soon as the app is ready. Welcome to the community!</p>
                 <div class="text-sm text-green-600 pt-2 border-t border-green-200">
-                    You are subscriber <span class="font-bold">#${userPosition || 'N/A'}</span>
+                    You are subscriber <span class="font-bold">#${position}</span>
                 </div>
             `;
             
@@ -210,38 +217,44 @@ class BriggXLandingPage {
     }
 
     initializeSubscriberCount() {
-        if (!this.getSubscriberCount()) {
-            this.setSubscriberCount(1);
+        // Initialize with known subscribers and their positions
+        const knownSubscribers = {
+            'mativongenzi97@gmail.com': 1,
+            'muemaian253@gmail.com': 2, 
+            'imativo95@gmail.com': 3
+        };
+
+        // Initialize the subscriber data if not already done
+        if (!window.briggxInitialized) {
+            window.briggxSubscribedEmails = new Map();
+            window.briggxTotalCount = 0;
+            
+            // Add known subscribers
+            Object.entries(knownSubscribers).forEach(([email, position]) => {
+                window.briggxSubscribedEmails.set(email.toLowerCase(), position);
+                if (position > window.briggxTotalCount) {
+                    window.briggxTotalCount = position;
+                }
+            });
+            
+            window.briggxInitialized = true;
         }
-        this.updateSubscriberCountDisplay();
     }
 
-    getSubscriberCount() {
-        if (!window.briggxSubscriberCount) {
-            window.briggxSubscriberCount = 1;
+    getTotalSubscriberCount() {
+        if (typeof window.briggxTotalCount === 'undefined') {
+            window.briggxTotalCount = 0;
         }
-        return window.briggxSubscriberCount;
+        return window.briggxTotalCount;
     }
 
-    setSubscriberCount(count) {
-        window.briggxSubscriberCount = count;
-    }
-
-    incrementSubscriberCount() {
-        const currentCount = this.getSubscriberCount();
-        this.setSubscriberCount(currentCount + 1);
-    }
-
-    updateSubscriberCountDisplay() {
-        const subscriberCountElement = document.getElementById('subscriber-count');
-        if (subscriberCountElement) {
-            subscriberCountElement.textContent = this.getSubscriberCount().toLocaleString();
-        }
+    setTotalSubscriberCount(count) {
+        window.briggxTotalCount = count;
     }
 
     getSubscribedEmails() {
         if (!window.briggxSubscribedEmails) {
-            window.briggxSubscribedEmails = new Set();
+            window.briggxSubscribedEmails = new Map();
         }
         return window.briggxSubscribedEmails;
     }
@@ -250,26 +263,46 @@ class BriggXLandingPage {
         return this.getSubscribedEmails().has(email.toLowerCase());
     }
 
-    addEmailToSubscribed(email) {
+    addEmailToSubscribed(email, position) {
         const subscribedEmails = this.getSubscribedEmails();
-        if (!subscribedEmails.has(email.toLowerCase())) {
-            subscribedEmails.add(email.toLowerCase());
-            this.setUserPosition(email.toLowerCase(), this.getSubscriberCount());
-        }
+        subscribedEmails.set(email.toLowerCase(), position);
     }
 
     getUserPosition(email) {
-        if (!window.briggxUserPositions) {
-            window.briggxUserPositions = new Map();
-        }
-        return window.briggxUserPositions.get(email.toLowerCase());
+        const subscribedEmails = this.getSubscribedEmails();
+        return subscribedEmails.get(email.toLowerCase());
     }
 
-    setUserPosition(email, position) {
-        if (!window.briggxUserPositions) {
-            window.briggxUserPositions = new Map();
+    handleExistingEmail(email) {
+        // If email exists in Waitlo but not in our tracking, add it with appropriate position
+        const subscribedEmails = this.getSubscribedEmails();
+        let position = subscribedEmails.get(email.toLowerCase());
+        
+        if (!position) {
+            // Assign based on known positions or next available
+            const knownPositions = {
+                'mativongenzi97@gmail.com': 1,
+                'muemaian253@gmail.com': 2, 
+                'imativo95@gmail.com': 3
+            };
+            
+            position = knownPositions[email.toLowerCase()];
+            
+            if (position) {
+                subscribedEmails.set(email.toLowerCase(), position);
+                // Update total count if this position is higher
+                if (position > this.getTotalSubscriberCount()) {
+                    this.setTotalSubscriberCount(position);
+                }
+            } else {
+                // For unknown emails, assign next position
+                position = this.getTotalSubscriberCount() + 1;
+                subscribedEmails.set(email.toLowerCase(), position);
+                this.setTotalSubscriberCount(position);
+            }
         }
-        window.briggxUserPositions.set(email.toLowerCase(), position);
+        
+        this.showAlreadyRegisteredMessage(email);
     }
 
     showAlreadyRegisteredMessage(email) {
@@ -277,46 +310,31 @@ class BriggXLandingPage {
         const thankYouMessage = document.getElementById('thank-you-message');
         
         if (waitlistSection && thankYouMessage) {
+            const userPosition = this.getUserPosition(email.toLowerCase());
+            
             const messageContainer = thankYouMessage.querySelector('.text-center');
-            let userPosition = this.getUserPosition(email.toLowerCase());
-            
-            // Assign positions based on known Waitlo subscriber order
-            if (!userPosition) {
-                const knownPositions = {
-                    'mativongenzi97@gmail.com': 1,
-                    'muemaian253@gmail.com': 2, 
-                    'imativo95@gmail.com': 3
-                };
-                
-                userPosition = knownPositions[email.toLowerCase()];
-                
-                if (userPosition) {
-                    this.setUserPosition(email.toLowerCase(), userPosition);
-                } else {
-                    // For any unknown emails, assign next available position
-                    userPosition = this.getSubscriberCount() + 1;
-                }
-            }
-            
             messageContainer.innerHTML = `
-                <div class="text-3xl">🎉</div>
-                <h2 class="text-xl font-bold text-green-900">You're already on the list!</h2>
-                <p class="text-green-700">We'll email you as soon as the app is ready. Welcome to the community!</p>
-                <div class="text-sm text-green-600 pt-2 border-t border-green-200">
-                    You are subscriber <span class="font-bold">#${userPosition}</span>
+                <div class="text-3xl">✅</div>
+                <h2 class="text-xl font-bold text-blue-900">Already registered!</h2>
+                <p class="text-blue-700">Good news - you're already secured a spot on our waitlist. No need to register again!</p>
+                <div class="text-sm text-blue-600 pt-2 border-t border-blue-200">
+                    Your position: <span class="font-bold">#${userPosition || 'N/A'}</span> in the queue
                 </div>
             `;
             
+            // Change the styling to blue theme for already registered
+            const container = thankYouMessage.querySelector('.bg-green-50');
+            container.className = 'bg-blue-50 border-2 border-blue-200 text-blue-800 p-6 rounded-xl max-w-sm mx-auto lg:mx-0 success-bounce';
+            
             waitlistSection.classList.add('hidden');
             thankYouMessage.classList.remove('hidden');
-            thankYouMessage.querySelector('.bg-green-50').classList.add('success-bounce');
         }
     }
 
     checkIfAlreadySubscribed() {
-        const form = document.getElementById('waitlist-form');
-        const thankYouMessage = document.getElementById('thank-you-message');
-        this.updateSubscriberCountDisplay();
+        // This method can be used to check subscription status on page load if needed
+        const totalCount = this.getTotalSubscriberCount();
+        console.log(`Total subscribers: ${totalCount}`);
     }
 }
 
